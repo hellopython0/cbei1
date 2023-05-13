@@ -1,0 +1,12 @@
+l = [[0 for i in range(101)] for _ in range(101)]
+n = int(input())
+for _ in range(n):
+    x,y = list(map(int,input().split()))
+    for i in range(10):
+        l[y+1][x:x+10] = [1]
+cnt = 0
+for y in range(101):
+    for x in range(101):
+        if l[y][x] == 1:
+            cnt += 1
+print(cnt)
