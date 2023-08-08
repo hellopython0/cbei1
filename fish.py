@@ -12,7 +12,6 @@ DARK_GROUND = (70,60,20)
 
 current_path = os.path.dirname(__name__)
 assets_path = os.path.join(current_path,"assets")
-
 class Fish():
     def __init__(self):
         self.image = pygame.image.load(os.path.join(assets_path,"fish.png"))
@@ -30,7 +29,7 @@ class Fish():
         self.dy = -10
         self.sound.play()
     def update(self):
-        self.dy += 0.5
+        self.dy += 1
         self.rect.y += self.dy
         if self.rect.y <= 0:
             self.rect.y = 0
@@ -97,6 +96,8 @@ class Game():
         self.pipes.append(Pipe())
         self.pipes_pos = 0
         self.score = 0
+        self.speed = 60
+        self.high_score = 0
         self.menu_on = True
     def process_events(self):
         for event in pygame.event.get():
@@ -121,6 +122,8 @@ class Game():
             if pipe.spipe_rect.x == self.pipes_pos:
                 self.pipes.append(Pipe())
                 self.score += 1
+                if self.score >= self.high_score:
+                    self.high_score = self.score
             if pipe.out_of_screen():
                 del self.pipes[0]
                 self.pipe_pos = random.randrange(200,400,4)
@@ -139,7 +142,7 @@ class Game():
         pygame.draw.rect(screen,GROUND,rect)
         pygame.draw.rect(screen,DARK_GROUND,rect,4)
         self.draw_text(screen,"Press SpaceKey to Play",self.font,center_x,center_y,DARK_GROUND)
-    def display_frame(self,screen):
+    def display_frame(self,screen,high_score):
         screen.fill(SEA)
         pygame.draw.rect(screen,GROUND,(0,SCREEN_HEIGHT - 50,SCREEN_WIDTH,50))
         pygame.draw.rect(screen,DARK_GROUND,(0,SCREEN_HEIGHT - 50,SCREEN_WIDTH,SCREEN_HEIGHT - 50),4)
@@ -150,12 +153,13 @@ class Game():
             pipe.update()
             pipe.draw(screen)
         self.draw_text(screen,"점수: " + str(self.score),self.font,100,50,WHITE)
+        self.draw_text(screen,"최고점수: " + str(self.high_score),self.font,500,50,WHITE)
 
                 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-    pygame.display.set_caption("날아라 물고기")
+    pygame.display.set_caption("물고기 드디어 날다")
     clock = pygame.time.Clock()
 
     game = Game()
@@ -167,9 +171,9 @@ def main():
             game.display_menu(screen)
         else:
             game.run_logic(screen)
-            game.display_frame(screen)
-        pygame.display.flip()
-        clock.tick(60)
+            game.display_frame(screen,game.high_score)
+        pygame.display.flip() 
+        clock.tick(game.speed + (game.score * 1.5))
     pygame.quit()
 
 main()
