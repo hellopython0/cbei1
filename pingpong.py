@@ -9,7 +9,7 @@ ORANGE = (250,170,70)
 RED = (255,0,0)
 
 SCREEN_WIDTH = 480
-SCREEN_HEIGHT = 640
+SCREEN_HEIGHT = 900
 
 current_path = os.path.dirname(__file__)
 assets_path = os.path.join(current_path,"assets")
@@ -24,11 +24,11 @@ class Ball():
         self.rect.x += self.dx
         self.rect.y += self.dy
         if self.rect.left < 0:
-            self.dx *= -1
+            self.dx *= -1.01
             self.rect.left = 0
             self.bounce_sound.play()
         elif self.rect.right > SCREEN_WIDTH:
-            self.dx *= -1
+            self.dx *= -1.01
             self.rect.right = SCREEN_WIDTH
             self.bounce_sound.play()
     def reset(self,x,y):
@@ -41,7 +41,7 @@ class Ball():
 
 class Player():
     def __init__(self,ping_sound):
-        self.rect = pygame.Rect(SCREEN_WIDTH//2,SCREEN_HEIGHT-40,5000,15)
+        self.rect = pygame.Rect(SCREEN_WIDTH//2,SCREEN_HEIGHT-40,500000,150)
         self.ping_sound = ping_sound
         self.dx = 0
     def update(self,ball):
@@ -51,7 +51,7 @@ class Player():
             self.dx = 0
         if self.rect.colliderect(ball.rect):
             ball.dx = random.randint(-5,5)
-            ball.dy *= -1
+            ball.dy *= -1.01
             ball.rect.bottom = self.rect.top
             self.ping_sound.play()
         self.rect.x += self.dx
@@ -60,7 +60,7 @@ class Player():
 
 class Enemy():
     def __init__(self,pong_sound):
-        self.rect = pygame.Rect(SCREEN_WIDTH//2,25,50,15)
+        self.rect = pygame.Rect(SCREEN_WIDTH//2,0,500000,40)
         self.pong_sound = pong_sound
     def update(self,ball):
         if self.rect.centerx > ball.rect.centerx:
@@ -77,7 +77,7 @@ class Enemy():
                 self.rect.x += 4
         if self.rect.colliderect(ball.rect):
             ball.dx = random.randint(-5,5)
-            ball.dy *= -1
+            ball.dy *= -1.01
             ball.rect.top = self.rect.bottom
             self.pong_sound.play()
     def draw(self,screen):
@@ -88,7 +88,7 @@ class Game():
         bounce_sound = pygame.mixer.Sound(os.path.join(assets_path,"bounce.wav"))
         ping_sound = pygame.mixer.Sound(os.path.join(assets_path,"ping.wav"))
         pong_sound = pygame.mixer.Sound(os.path.join(assets_path,"pong.wav"))
-        self.font = pygame.font.SysFont("맑은 고딕",50,False,False)
+        self.font = pygame.font.SysFont("malgungothic",50,False,False)
         self.ball = Ball(bounce_sound)
         self.player = Player(ping_sound)
         self.enemy = Enemy(pong_sound)
@@ -100,9 +100,9 @@ class Game():
                 return False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    self.player.dx = -5
+                    self.player.dx = -10
                 elif event.key == pygame.K_RIGHT:
-                    self.player.dx = 5
+                    self.player.dx = 10
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     self.player.dx = 0
@@ -132,7 +132,7 @@ class Game():
             self.player_score = 0
             self.enemy_score = 0
             pygame.time.wait(2000)
-        elif self.enemy == 10:
+        elif self.enemy_score == 10:
             self.display_message(screen,"패배",WHITE)
             self.player_score = 0
             self.enemy_score = 0
@@ -144,9 +144,9 @@ class Game():
 
             for x in range(0,SCREEN_WIDTH,24):
                 pygame.draw.rect(screen,WHITE,[x,SCREEN_HEIGHT//2,10,10])
-            enemy_score_label = self.font.render(str(self.enemy_score),True,WHITE)
+            enemy_score_label = self.font.render("적 "+str(self.enemy_score),True,WHITE)
             screen.blit(enemy_score_label,(10,260))
-            player_score_label = self.font.render(str(self.player_score),True,WHITE)
+            player_score_label = self.font.render("나 "+str(self.player_score),True,WHITE)
             screen.blit(player_score_label,(10,340))
 
 def main():
@@ -161,6 +161,6 @@ def main():
         game.run_logic()
         game.display_frame(screen)
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(120)
     pygame.quit()
 main()
