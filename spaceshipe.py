@@ -192,6 +192,6 @@ def main():
             game.display_frame(screen)
         pygame.display.flip()
         clock.tick(FPS)
-    pygaem.quit()
+    pygame.quit()
 if __name__ == "__main__":
     main()
